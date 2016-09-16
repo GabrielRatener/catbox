@@ -1,0 +1,58 @@
+
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+ul#messages {
+	list-style-type: none;
+}
+
+ul#messages .badge {
+	float: right;
+}
+
+ul#messages textarea {
+	color: black;
+	width: 250px;
+	max-width: 250px;
+}
+
+ul#messages .media-body {
+	max-width: 250px;
+}
+
+ul#messages .media-left {
+	font-weight: bolder;
+	text-transform: uppercase;
+}
+
+ul#messages .media-left div {
+	width: 40px;
+	text-align: right;
+}
+
+
+.navbar-header input {
+	text-transform: capitalize;
+	background-color: rgba(0,0,0, 0);
+	border: none;
+	display: inline;
+	min-width: 10px;
+}
+
+.navbar-brand span {
+	color: white;
+}
+
+.navbar-header:hover {
+	color: white;
+}
+
+
+.container h1 {
+	margin-bottom: 50px;
+}

@@ -1,0 +1,23 @@
+{
+  "name": "catbox",
+  "version": "1.0.0",
+  "description": "A simple chat server",
+  "main": "server.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "keywords": [
+    "chat",
+    "server",
+    "bizubee"
+  ],
+  "author": "Gabriel Ratener",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.14.0",
+    "jade": "^1.11.0",
+    "node-uuid": "^1.4.7",
+    "pug": "^2.0.0-beta6",
+    "socketio": "^1.0.0"
+  }
+}

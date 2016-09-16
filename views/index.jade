@@ -1,0 +1,48 @@
+doctype html
+html#app(lang='en')
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+
+		title {{unread | showUnread}}#{organization} - #{topic}
+
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css')
+		link(rel='stylesheet', href='css/style.css')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js')
+		script(src='https://cdn.socket.io/socket.io-1.0.0.js')
+		script(src='js/bundle.out.js')
+
+
+	body.container
+		nav.navbar.navbar-inverse.navbar-fixed-top
+			.container
+				.navbar-header
+					span.navbar-brand
+						span #{organization} - hi, 
+						input(v-model='names[index]', v-on:change='updateName')
+		#content.container
+			h1= topic
+			ul#messages.media-list
+				li.media(v-for="message in messages")
+					.media-left
+						div(title='{{message.sender | getName names | cap}}')
+							{{message.sender | getName names | initials}}:
+					.media-body
+						span.message-body {{message.body}}
+						br
+						span.badge @ {{message.time | time}}
+				li.media(id='message-input')
+					hr
+					.media-left
+						div(title='{{index | getName names | cap}}')
+							{{index | getName names | initials}}:
+					.media-body
+						textarea(
+							v-model='text'
+							v-on:keyup.enter='sendMessage()',
+							placeholder='Write message here...'
+							)
+
+
