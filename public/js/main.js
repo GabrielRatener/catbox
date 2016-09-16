@@ -62,7 +62,8 @@ window.onload = function(e) {
 		}
 	});
 
-	const socket = io('http://localhost:3000');
+	const socket =
+		io(`${window.location.protocol}//${window.location.hostname}:3000`);
 
 	let visible = true;
 

@@ -15,7 +15,6 @@ const topic		= (process.argv.length > 4) ? process.argv[4] : "Let's Fuckin Chat!
 const members	= new Array(size);
 const names		= new Array(size);
 const statii	= new Array(size);
-const hostname	= '127.0.0.1:8080';
 const thread	= [];
 
 function extractId(socket) {
@@ -41,12 +40,17 @@ for (let i = 0; i < size; i++) {
 	members[i] = id;
 	names[i] = newName();
 	reverser.set(id, i);
-	console.log(`  http://${hostname}/${id}`);
+	console.log(`  ${id} (${names[i]})`);
 }
 
 sockets.on('connection', (socket) => {
 	const id = extractId(socket);
 	const index = reverser.get(id);
+
+	if (index === null) {
+		socket.disconnect();
+	}
+
 	socket.emit('init', {
 		index,
 		thread,
@@ -90,4 +94,4 @@ app.get('/:id', (req, res) => {
 	});
 });
 
-server.listen(8080);
+server.listen(8000);
