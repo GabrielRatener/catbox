@@ -17,7 +17,7 @@
   ],
   "author": "Gabriel Ratener",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "tangler": ">=0.1.0",
     "cli-prompt": "^0.6.0",
     "express": "^4.14.0",
