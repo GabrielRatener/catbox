@@ -14,6 +14,7 @@
   "author": "Gabriel Ratener",
   "license": "MIT",
   "devDependencies": {
+    "cli-prompt": "^0.6.0",
     "express": "^4.14.0",
     "jade": "^1.11.0",
     "node-uuid": "^1.4.7",

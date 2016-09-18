@@ -1,97 +1,68 @@
 
 import {Server} from 'http'
+import {runInNewContext} from 'vm'
 import express from 'express'
 import io from 'socket.io'
 import jade from 'pug'
 import uuid from 'node-uuid'
 import {newName} from './lib/names'
+import {Chat} from './lib/chat'
+import {prompt} from './lib/prompt'
 
 const app 		= express();
 const server 	= new Server(app);
-const sockets 	= io(3000);
-const reverser	= new Map();
-const size	 	= process.argv[3];
-const topic		= (process.argv.length > 4) ? process.argv[4] : "Let's Fuckin Chat!";
-const members	= new Array(size);
-const names		= new Array(size);
-const statii	= new Array(size);
-const thread	= [];
+const sockets 	= io.listen(server);
+const chats		= new Map([['', {reverser: new Map()}]]);
+const api		= {
+	chat: {
+		create(size, topic) {
+			const id 	= uuid.v4();
+			const chat	= new Chat(id, sockets, size, topic);
+			chats.set(id, chat);
 
-function extractId(socket) {
-	const reg 		= /http:\/\/.+\/(.+)/;
-	const url 		= socket.handshake.headers.referer;
-	const [_, id] 	= reg.exec(url);
+			console.log(`Generating chat...`);
+			console.log(` chat id: ${id}`);
+			console.log(` urls:`);
+			for (let i = 0; i < chat.size; i++) {
+				console.log(`  http://localhost:8080/${id}/${chat.memberIds[i]}`);
+			}
+		},
+		delete(id) {
+			chats.delete(id);
+			console.log(`deleted chat "${id}"`);
+		}		
+	}
+};
 
-	return id;
-}
-
-function transformMessage(message) {
-	const obj = Object.assign({}, message);
-
-
+function startREPL() {
+	prompt('>> ', (err, text) => {
+		const result = runInNewContext(text, api);
+		console.log();
+		startREPL();
+	});
 }
 
 app.set('view engine', 'jade');
 
-console.log(`Creating ${size} users:`);
-
-for (let i = 0; i < size; i++) {
-	const id = uuid.v4();
-	members[i] = id;
-	names[i] = newName();
-	reverser.set(id, i);
-	console.log(`  ${id} (${names[i]})`);
-}
-
-sockets.on('connection', (socket) => {
-	const id = extractId(socket);
-	const index = reverser.get(id);
-
-	if (index === null) {
-		socket.disconnect();
-	}
-
-	socket.emit('init', {
-		index,
-		thread,
-		names
-	});
-
-	socket.on('message', (msg) => {
-		const message = {
-			body: msg,
-			sender: index,
-			time: Date.now()
-		};
-		thread.push(message);
-		sockets.emit('message', message);
-	});
-
-	socket.on('update-name', (name) => {
-		names[index] = name;
-		sockets.emit('update-name', {index, name});
-	});
-});
-
 app.use(express.static('public'));
 
-app.get('/:id', (req, res) => {
-	const index 		= reverser.get(req.params.id);
-	const memberList	= new Array(size);
-	
-	for (let i = 0; i < size; i++) {
-		memberList[i] = {
-			name: names[i],
-			status: statii[i]
-		};
-	}
+app.get('/:chat/:participant', (req, res) => {
+	const chat			= chats.get(req.params.chat);
+	const index 		= chat ? chat.reverser.get(req.params.participant) : null;
+	const {topic} 		= chat;
 
 	res.render('index.jade', {
 		topic,
 		organization: 'CatBox',
-		members: memberList,
-		name: names[index],
+		name: chat.members[index].name,
 	});
 });
 
-server.listen(8000);
+server.listen(process.env.PORT || 8080);
+
+console.log('Enter js here, or type "help()"');
+
+startREPL();
+
+
+
