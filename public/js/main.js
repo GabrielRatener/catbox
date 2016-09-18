@@ -50,6 +50,8 @@ function showBox() {
 
 window.onload = function(e) {
 
+	const audio = new Audio('../../slap.wav');
+
 	const model = new Vue({
 		el: '#app',
 		data: {
@@ -61,7 +63,7 @@ window.onload = function(e) {
 		},
 		methods: {
 			sendMessage(e) {
-				socket.emit('message', this.text);
+				socket.emit('message', this.text.trim());
 				this.text = '';
 			},
 			updateName(e) {
@@ -77,7 +79,7 @@ window.onload = function(e) {
 						&& last.sender === message.sender) {
 
 						this.thread.$set(top, {
-							body: `${last.body}\n${message.body}`,
+							body: `${last.body}\n\n${message.body}`,
 							time: message.time,
 							sender: message.sender
 						});
@@ -113,6 +115,9 @@ window.onload = function(e) {
 	});
 
 	socket.on('message', (json) => {
+		
+		if (json.sender !== model.index)
+			audio.play();
 		model.addMessage(json);
 		window.setTimeout(showBox, 0);
 		if (!visible) {

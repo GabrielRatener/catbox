@@ -13,6 +13,8 @@ const app 		= express();
 const server 	= new Server(app);
 const sockets 	= io.listen(server);
 const chats		= new Map([['', {reverser: new Map()}]]);
+const host		= process.argv[3];
+const port		= process.env.PORT || 8080;
 const api		= {
 	chat: {
 		create(size, topic) {
@@ -24,7 +26,7 @@ const api		= {
 			console.log(` chat id: ${id}`);
 			console.log(` urls:`);
 			for (let i = 0; i < chat.size; i++) {
-				console.log(`  http://localhost:8080/${id}/${chat.memberIds[i]}`);
+				console.log(`  http://${host}:${port}/${id}/${chat.memberIds[i]}`);
 			}
 		},
 		delete(id) {
@@ -42,7 +44,7 @@ function startREPL() {
 	});
 }
 
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(express.static('public'));
 
@@ -58,7 +60,7 @@ app.get('/:chat/:participant', (req, res) => {
 	});
 });
 
-server.listen(process.env.PORT || 8080);
+server.listen(port);
 
 console.log('Enter js here, or type "help()"');
 

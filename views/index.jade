@@ -21,7 +21,7 @@ html#app(lang='en')
 				.navbar-header
 					span.navbar-brand
 						span #{organization} - hi, 
-						input(v-model='members[index].name', v-on:change='updateName')
+						input(v-model='members[index].name', v-on:input='updateName')
 		#content.container
 			.members
 				table.table.table-inverse
@@ -51,6 +51,7 @@ html#app(lang='en')
 								{{message.sender | getName members | initials}}:
 						.media-body
 							span.message-body {{{message.body | ntobr}}}
+							br
 							br
 							span.badge @ {{message.time | time}}
 					li.media(id='message-input')
