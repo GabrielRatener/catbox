@@ -36,7 +36,7 @@ html#app(lang='en')
 					tr(v-for='member in members', v-bind:class=`{'active': $index === index}`)
 						td {{$index + 1}}
 						td {{member.name | cap}}
-						td {{member.name | initials | uppercase}}
+						td(v-bind:style='{color: member.color}') {{member.name | initials | uppercase}}
 						td
 							span(
 								class=`glyphicon {{member.online | bool 'glyphicon-ok-circle' 'glyphicon-ban-circle'}}`,
@@ -48,7 +48,8 @@ html#app(lang='en')
 					li.media(v-for="message in thread")
 						.media-left
 							div(title='{{message.sender | getName members | cap}}')
-								{{message.sender | getName members | initials}}:
+								span(v-bind:style='{color: members[message.sender].color}')
+									{{message.sender | getName members | initials}}:
 						.media-body
 							span.message-body {{{message.body | ntobr}}}
 							br
@@ -58,7 +59,8 @@ html#app(lang='en')
 						hr
 						.media-left
 							div(title='{{index | getName members | cap}}')
-								{{index | getName members | initials}}:
+								span(v-bind:style='{color: members[index].color}')
+									{{index | getName members | initials}}:
 						.media-body
 							textarea#compose(
 								v-model='text'

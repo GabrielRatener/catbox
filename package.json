@@ -2,9 +2,10 @@
   "name": "catbox",
   "version": "1.0.0",
   "description": "A simple chat server",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "test": "test.js"
+    "test": "test.js",
+    "start": "index.js"
   },
   "keywords": [
     "chat",
@@ -19,6 +20,7 @@
     "jade": "^1.11.0",
     "node-uuid": "^1.4.7",
     "pug": "^2.0.0-beta6",
-    "socketio": "^1.0.0"
+    "socketio": "^1.0.0",
+    "tangler": "^0.1.0"
   }
 }
