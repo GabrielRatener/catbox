@@ -96,7 +96,8 @@ window.onload = function(e) {
 	const [_, cid, uid] =
 		window.location.pathname.split('/');
 	const url =
-		`${window.location.protocol}//${window.location.hostname}:8080/${cid}`;
+		`${window.location.protocol}//${window.location.hostname}:`
+			+ `${window.location.protocol}/${cid}`;
 	const socket = io(url);
 
 	console.log(url);
