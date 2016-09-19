@@ -97,7 +97,7 @@ window.onload = function(e) {
 		window.location.pathname.split('/');
 	const url =
 		`${window.location.protocol}//${window.location.hostname}:`
-			+ `${window.location.protocol}/${cid}`;
+			+ `${window.location.port}/${cid}`;
 	const socket = io(url);
 
 	console.log(url);
