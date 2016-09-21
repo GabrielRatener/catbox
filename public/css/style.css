@@ -4,6 +4,23 @@ body {
   overflow: hidden;
 }
 
+
+.color {
+	float: right;
+}
+
+.color input {
+	margin: 2px;
+	background-color: white;
+	border: none;
+	width: 80px;
+	border-width: 2px;
+	border-radius: 2px;
+	text-transform: uppercase;
+	text-shadow: #000000 0.5px 0.5px 1px;
+	outline: none;
+}
+
 .thread {
 	display: block;
 	position: absolute;
@@ -48,15 +65,19 @@ ul#messages textarea {
 	color: black;
 	width: 250px;
 	max-width: 250px;
+	border: none;
+	padding: 0px;
+	outline: none;
+	outline-bottom: 1px;
 }
 
 ul#messages .media-body {
 	max-width: 250px;
 }
 
-ul#messages .media-left {
-	font-weight: bolder;
+.initials {
 	text-transform: uppercase;
+	text-shadow: #000000 0.5px 0.5px 1px;
 }
 
 ul#messages .media-left div {
@@ -64,6 +85,9 @@ ul#messages .media-left div {
 	text-align: right;
 }
 
+.navbar-header {
+	margin-left: 0px;
+}
 
 .navbar-header input {
 	text-transform: capitalize;
@@ -91,3 +115,7 @@ ul#messages .media-left div {
 
 .glyphicon-ok-circle {color: green;}
 .glyphicon-ban-circle {color: red;}
+
+.media-body img {
+	height: 100px;
+}

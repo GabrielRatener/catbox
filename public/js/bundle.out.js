@@ -1,6 +1,8 @@
 (function () {
 	'use strict';
 
+	const hexSet = new Set('0123456789abcdefABCDEF');
+
 	Vue.filter('signify', (value, name) => {
 		if (value === name) {
 			return `me (${name}):`;
@@ -27,7 +29,7 @@
 	});
 
 	Vue.filter('getName', (index, members) =>
-		index !== null ? members[index].name : '');
+		index !== null && index > -1 ? members[index].name : '');
 
 	Vue.filter('cap', (value) => (value || '')
 		.split(/\s/g)
@@ -45,15 +47,66 @@
 	Vue.filter('bool', (value, truthy = 'yes', falsy = 'no') => 
 		value? truthy : falsy);
 
+	Vue.filter('contains', (array, key, value, index = -1) => {
+		for (let i = 0; i < array.length; i++) {
+			const element = array[i];
+			if (i === index) {
+				continue;
+			}
+
+			if (element.hasOwnProperty(key) && element[key] === value) {
+				return true;
+			}
+		}
+
+		return false;
+	});
+
+	Vue.filter('typingNames', (array, index) => {
+		const arr = [];
+		for (let i = 0; i < array.length; i++) {
+			const {typing, name} = array[i];
+			if (typing && i !== index) {
+				arr.push(name);
+			}
+		}
+
+		switch (arr.length) {
+			case 1:
+				return `${arr[0]} is typing...`;
+			case 2:
+				return `${arr[0]} and ${arr[1]} are typing...`;
+			default:
+				const last = arr.pop();
+				return `${arr.join(', ')}, and ${last} are typing...`;
+		}
+	});
+
+	Vue.filter('length', (value) => value.length);
+
+	Vue.filter('rgb', (value) => `rgb(${value.join(',')})`)
+
+	Vue.filter('color', (value) => {
+		const base = '#000';
+		if (value.length === 3 || value.length === 6) {
+			for (let char of value) {
+				if (!hexSet.has(char)) {
+					return base;
+				}
+			}
+			return `#${value}`;
+		} else {
+			return base;
+		}
+	});
+
 	function showBox() {
 		const messages = document.querySelector('.thread');
 		messages.scrollTop = messages.scrollHeight;
 	}
 
 	window.onload = function(e) {
-
 		const audio = new Audio('../../slap.wav');
-
 		const model = new Vue({
 			el: '#app',
 			data: {
@@ -61,15 +114,18 @@
 				members: [],
 				unread: 0,
 				index: null,
-				text: ''
+				text: '',
+				typing: -1
 			},
 			methods: {
 				sendMessage(e) {
-					socket.emit('message', this.text.trim());
+					const trimmed = this.text.trim()
+					socket.emit('message', trimmed);					
 					this.text = '';
 				},
-				updateName(e) {
-					socket.emit('update-name', this.members[this.index].name);
+				update(property) {
+					socket.emit(`update-${property}`,
+						this.members[this.index][property]);
 				},
 				addMessage(message) {
 					if (this.thread.length > 0) {
@@ -91,6 +147,12 @@
 					}
 					
 					this.thread.push(message);
+				},
+				showTyping() {
+					if (this.text.trim() === '')
+						return;
+					else
+						socket.emit('update-typing', true);
 				}
 			}
 		});
@@ -102,7 +164,7 @@
 				+ `${window.location.port}/${cid}`;
 		const socket = io(url);
 
-		console.log(url);
+		const updatableProperties = ['name', 'online', 'color'];
 
 		let visible = true;
 
@@ -118,7 +180,6 @@
 		});
 
 		socket.on('message', (json) => {
-			
 			if (json.sender !== model.index)
 				audio.play();
 			model.addMessage(json);
@@ -128,12 +189,27 @@
 			}
 		});
 
-		socket.on('update-name', ({index, name}) => {
-			model.members[index].name = name;
-		});
+		for (let property of updatableProperties) {
+			socket.on(`update-${property}`, (msg) => {
+				model.members[msg.index][property] = msg[property];
+			});
+		}
 
-		socket.on('update-online', ({index, online}) => {
-			model.members[index].online = online;
+
+		socket.on('update-typing', ({index, typing}) => {
+			if (index === model.index) {
+				return;
+			}
+
+			if (typing) {
+				model.typing = index;
+			} else {
+				if (index === model.typing) {
+					model.typing = -1;
+				}
+			}
+
+			model.members[index].typing = typing;
 		});
 
 		window.addEventListener('visibilitychange', (e) => {

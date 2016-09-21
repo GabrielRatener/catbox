@@ -17,11 +17,18 @@ html#app(lang='en')
 
 	body.container
 		nav.navbar.navbar-inverse.navbar-fixed-top
-			.container
+			div.title
 				.navbar-header
 					span.navbar-brand
 						span #{organization} - hi, 
-						input(v-model='members[index].name', v-on:input='updateName')
+						input(v-model='members[index].name', v-on:input='update("name")')
+			div.color
+				span.navbar-brand
+					span #
+					input(
+						v-model='members[index].color',
+						v-on:input='update("color")',
+						style='color: {{members[index].color | color}}')
 		#content.container
 			.members
 				table.table.table-inverse
@@ -30,13 +37,14 @@ html#app(lang='en')
 							h4 Participants
 						tr
 							th #
-							th Name
 							th Initials
+							th Name
 							th Online
 					tr(v-for='member in members', v-bind:class=`{'active': $index === index}`)
 						td {{$index + 1}}
+						td.initials(style='color: {{member.color | color}}')
+							{{member.name | initials | uppercase}}
 						td {{member.name | cap}}
-						td(v-bind:style='{color: member.color}') {{member.name | initials | uppercase}}
 						td
 							span(
 								class=`glyphicon {{member.online | bool 'glyphicon-ok-circle' 'glyphicon-ban-circle'}}`,
@@ -48,23 +56,31 @@ html#app(lang='en')
 					li.media(v-for="message in thread")
 						.media-left
 							div(title='{{message.sender | getName members | cap}}')
-								span(v-bind:style='{color: members[message.sender].color}')
-									{{message.sender | getName members | initials}}:
+								span.initials(style='color: {{members[message.sender].color | color}}')
+									{{message.sender | getName members | initials}}
 						.media-body
 							span.message-body {{{message.body | ntobr}}}
 							br
 							br
 							span.badge @ {{message.time | time}}
+					li.media(id='message-input', v-if='typing > -1')
+						.media-left
+							div(title='{{typing | getName members | cap}}')
+								span.initials(style='color: {{members[typing].color | color}}')
+									{{typing | getName members | initials}}
+						.media-body
+							img(src='../../images/typing.gif')
 					li.media(id='message-input')
 						hr
 						.media-left
 							div(title='{{index | getName members | cap}}')
-								span(v-bind:style='{color: members[index].color}')
-									{{index | getName members | initials}}:
+								span.initials(style='color: {{members[index].color | color}}')
+									{{index | getName members | initials}}
 						.media-body
 							textarea#compose(
 								v-model='text'
-								v-on:keyup.enter='sendMessage()',
+								v-on:keyup.enter='sendMessage',
+								v-on:input='showTyping',
 								placeholder='Write message here...'
 								)
 
