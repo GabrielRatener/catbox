@@ -18,13 +18,13 @@
   "author": "Gabriel Ratener",
   "license": "MIT",
   "dependencies": {
-    "tangler": ">=0.1.0",
     "cli-prompt": "^0.6.0",
     "express": "^4.14.0",
     "jade": "^1.11.0",
+    "natural": "^0.5.4",
     "node-uuid": "^1.4.7",
     "pug": "^2.0.0-beta6",
     "socketio": "^1.0.0",
-    "tangler": "^0.1.0"
+    "tangler": "^0.2.1"
   }
 }

@@ -8,4 +8,7 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 
-tangler.run(path.resolve('lib/server.js'));
+// Tangler calls the `init` entry funciton in lib/server.js
+tangler
+	.require(path.resolve('lib/server.js'))
+	.default();
